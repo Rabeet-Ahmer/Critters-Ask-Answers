@@ -111,7 +111,7 @@
                 <span id="ui-customer-count" class="text-sm bg-warmbrown text-cream px-3 py-1 rounded-full">1 / 3</span>
             </h2>
             
-            <div class="flex-1 overflow-y-auto pr-1 flex flex-col justify-between gap-3 min-h-0">
+            <div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-3 min-h-0">
                 <div class="flex flex-col items-center shrink-0">
                     <div id="character-emoji" class="text-6xl md:text-8xl mb-2 animate-bounce">🦔</div>
                     <div id="character-name" class="font-bold text-lg md:text-xl mb-1 text-chocolate">Harriet the Hedgehog</div>
@@ -126,9 +126,9 @@
                 </div>
 
                 <!-- Draft Answer Box -->
-                <div class="w-full mt-auto shrink-0">
-                    <h3 class="font-bold text-xs md:text-sm text-warmbrown mb-1">Your Drafted Response:</h3>
-                    <div id="draft-box" class="bg-white/50 border-2 border-dashed border-warmbrown rounded-xl p-3 h-20 md:h-28 flex items-center justify-center text-center text-chocolate italic text-sm md:text-base overflow-y-auto">
+                <div class="w-full flex-1 min-h-0 flex flex-col shrink-0">
+                    <h3 class="font-bold text-xs md:text-sm text-warmbrown mb-1 shrink-0">Your Drafted Response:</h3>
+                    <div id="draft-box" class="bg-white/50 border-2 border-dashed border-warmbrown rounded-xl p-3 flex-1 flex items-center justify-center text-center text-chocolate italic text-sm overflow-y-auto">
                         Select a research method on the right to draft an answer...
                     </div>
                 </div>
@@ -147,7 +147,7 @@
                 <div>
                     <h2 class="text-xl md:text-2xl font-bold mb-1 text-chocolate">Barnaby's Brain</h2>
                     <p class="text-xs text-warmbrown font-bold mb-2 bg-cream inline-block px-2 rounded">Status: Memorized everything up to 2025.</p>
-                    <p class="text-xs md:text-sm italic text-chocolate/80">Barnaby is free to consult. He uses his internal, pretrained memory. He is highly confident, but doesn't know about current events.</p>
+                    <p class="text-xs md:text-sm italic text-chocolate/80">Barnaby is free to consult. He uses his internal, pretrained memory. He is highly confident, but doesn't know about current events, live prices, or today's weather.</p>
                 </div>
                 <button id="btn-owl" class="btn-yellow w-full py-2 md:py-3 font-bold text-base md:text-lg mt-3 shrink-0">
                     🦉 Consult Barnaby (Free)
@@ -325,7 +325,7 @@
 
         function initGame() {
             showModal("Welcome to the Kiosk!", 
-                "You are the new Postmaster Apprentice! Customers will ask you questions.<br><br><b>Barnaby the Owl</b> memorized everything up to 2025. He is free to use, but he will confidently <b>hallucinate</b> (make up) answers for current events.<br><br><b>The Scout Snail</b> checks the live web, but costs a precious 🍓 Berry Treat.<br><br>Don't fall for Barnaby's confident guesses on live events!", 
+                "You are the new Postmaster Apprentice! Customers will ask you questions.<br><br><b>Barnaby the Owl</b> memorized everything up to 2025. He is free to use, but he will confidently hallucinate about current events, live prices, and today's weather.<br><br><b>Scout Snail</b> browses the live web in real-time. Accurate, but costs 1 Berry Treat per query.<br><br>Can you figure out which source to use for each question?",
                 "Start Day 1", 
                 startDay);
         }
@@ -469,13 +469,13 @@
 
             if (reputation >= 4) {
                 title = "🎉 Certified Master Prompter!";
-                message = "Outstanding job! You successfully managed the kiosk with high praise.<br><br>You truly mastered the concept that <b>Pretrained AI Models have a knowledge cutoff</b>. By perfectly balancing Web Retrieval (Scout Snail) for current events and internal memory (Barnaby) for historical facts, you kept the villagers safe from AI hallucinations!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+                message = "Outstanding job! You successfully managed the kiosk with high praise.<br><br>You truly mastered the concept that <b>Pretrained AI Models have a knowledge cutoff</b>. By perfectly distinguishing between static knowledge and live information, you proved that LLMs like me have limitations, and the best practices involve knowing when to retrieve live data vs. using pretrained knowledge.";
             } else if (reputation === 3) {
                 title = "👍 Capable Postmaster!";
-                message = "Good job! You managed the kiosk, though a few villagers got mixed up by bad advice.<br><br>Remember, <b>Pretrained AI Models have a knowledge cutoff</b>. You caught most of Barnaby's hallucinations, but next time, be extra careful to use the Scout Snail for current events!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+                message = "Good job! You managed the kiosk, though a few villagers got mixed up by bad advice.<br><br>Remember, <b>Pretrained AI Models have a knowledge cutoff</b>. You caught most of the real-time questions, but remember: current events, live prices, today's weather, and real-time updates always need live retrieval.";
             } else {
                 title = "😅 Barely Scraped By!";
-                message = "Phew... You kept the kiosk open, but the villagers are very skeptical of your advice.<br><br>You fell for Barnaby's confident hallucinations a bit too often. Always remember: <b>Pretrained AI Models have a knowledge cutoff</b> and cannot know current events without a live web search!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+                message = "Phew... You kept the kiosk open, but the villagers are very skeptical of your advice.<br><br>You fell for Barnaby's confident hallucinations a bit too often. Always remember: Pretrained AI models like me have a knowledge cutoff. Questions about 'today', 'current', 'now', or 'latest' almost always need live web retrieval!";
             }
 
             showModal(title, message, "Play Again", () => location.reload());
