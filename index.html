@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critters Asks & Answers</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#F9F6F0',
+                        tan: '#D2B48C',
+                        warmbrown: '#A67B5B',
+                        chocolate: '#3C2F2F',
+                        butteryellow: '#FFF7B3',
+                        rustred: '#E74C3C'
+                    },
+                    fontFamily: {
+                        sans: ['Quicksand', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #F9F6F0;
+            color: #3C2F2F;
+            user-select: none;
+        }
+        .wood-panel {
+            background-color: #D2B48C;
+            border: 4px solid #A67B5B;
+            border-radius: 16px;
+            box-shadow: 4px 4px 0px #A67B5B;
+        }
+        .btn-yellow {
+            background-color: #FFF7B3;
+            color: #3C2F2F;
+            border: 3px solid #A67B5B;
+            border-radius: 12px;
+            box-shadow: 2px 2px 0px #A67B5B;
+            transition: all 0.1s ease-in-out;
+        }
+        .btn-yellow:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #A67B5B;
+        }
+        .btn-yellow:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-red {
+            background-color: #E74C3C;
+            color: #F9F6F0;
+            border: 3px solid #3C2F2F;
+            border-radius: 12px;
+            box-shadow: 2px 2px 0px #3C2F2F;
+            transition: all 0.1s ease-in-out;
+        }
+        .btn-red:active:not(:disabled) {
+            transform: translate(2px, 2px);
+            box-shadow: 0px 0px 0px #3C2F2F;
+        }
+        .btn-red:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #a67b5b;
+        }
+        
+        /* Custom scrollbar for text areas */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #F9F6F0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #A67B5B; border-radius: 4px; }
+        
+        @keyframes pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop { animation: pop 0.3s ease-out forwards; }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex flex-col font-sans">
+
+    <!-- Top Bar -->
+    <header class="bg-warmbrown text-cream p-4 flex justify-between items-center shadow-md z-10 shrink-0 border-b-4 border-chocolate">
+        <div class="text-xl font-bold flex items-center gap-2">
+            <span>🌲</span> Critters Asks & Answers
+        </div>
+        <div class="flex gap-6 text-lg font-semibold">
+            <div id="ui-day" class="bg-chocolate px-4 py-1 rounded-full">Day 1 / 3</div>
+            <div class="bg-chocolate px-4 py-1 rounded-full flex items-center gap-2">
+                Reputation: <span id="ui-reputation" class="text-butteryellow tracking-widest">★★★★★</span>
+            </div>
+            <div class="bg-chocolate px-4 py-1 rounded-full flex items-center gap-2">
+                Treats: <span id="ui-treats" class="text-rustred text-xl">🍓🍓🍓🍓🍓</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Game Area -->
+    <main class="flex-1 flex flex-col md:flex-row gap-6 p-4 md:p-6 overflow-hidden max-w-7xl mx-auto w-full relative min-h-0">
+        
+        <!-- Left Panel: Customer Desk -->
+        <section class="flex-1 wood-panel p-4 md:p-6 flex flex-col min-h-0 overflow-hidden">
+            <h2 class="text-xl md:text-2xl font-bold mb-3 md:mb-4 border-b-2 border-warmbrown pb-2 flex justify-between shrink-0">
+                <span>🛎️ Customer Counter</span>
+                <span id="ui-customer-count" class="text-sm bg-warmbrown text-cream px-3 py-1 rounded-full">1 / 3</span>
+            </h2>
+            
+            <div class="flex-1 overflow-y-auto pr-1 flex flex-col justify-between gap-3 min-h-0">
+                <div class="flex flex-col items-center shrink-0">
+                    <div id="character-emoji" class="text-6xl md:text-8xl mb-2 animate-bounce">🦔</div>
+                    <div id="character-name" class="font-bold text-lg md:text-xl mb-1 text-chocolate">Harriet the Hedgehog</div>
+                </div>
+                
+                <div class="bg-cream p-3 md:p-4 rounded-xl border-2 border-warmbrown w-full relative shrink-0">
+                    <div class="absolute -top-3 left-6 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-b-[15px] border-b-warmbrown"></div>
+                    <div class="absolute -top-2 left-[25px] w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-b-[12px] border-b-cream"></div>
+                    <p id="dialogue-box" class="text-sm md:text-lg font-semibold text-chocolate">
+                        "Loading customer query..."
+                    </p>
+                </div>
+
+                <!-- Draft Answer Box -->
+                <div class="w-full mt-auto shrink-0">
+                    <h3 class="font-bold text-xs md:text-sm text-warmbrown mb-1">Your Drafted Response:</h3>
+                    <div id="draft-box" class="bg-white/50 border-2 border-dashed border-warmbrown rounded-xl p-3 h-20 md:h-28 flex items-center justify-center text-center text-chocolate italic text-sm md:text-base overflow-y-auto">
+                        Select a research method on the right to draft an answer...
+                    </div>
+                </div>
+
+                <button id="btn-submit" disabled class="btn-red w-full py-3 md:py-4 text-lg md:text-xl font-bold mt-2 flex justify-center items-center gap-2 shrink-0">
+                    ✉️ Stamp & Send
+                </button>
+            </div>
+        </section>
+
+        <!-- Right Panel: Research Station -->
+        <section class="flex-1 flex flex-col gap-4 md:gap-6 min-h-0 overflow-y-auto">
+            <!-- Barnaby's Brain -->
+            <div class="wood-panel p-4 md:p-6 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[160px]">
+                <div class="absolute top-2 right-2 text-4xl opacity-20">🦉</div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold mb-1 text-chocolate">Barnaby's Brain</h2>
+                    <p class="text-xs text-warmbrown font-bold mb-2 bg-cream inline-block px-2 rounded">Status: Memorized everything up to 2025.</p>
+                    <p class="text-xs md:text-sm italic text-chocolate/80">Barnaby is free to consult. He uses his internal, pretrained memory. He is highly confident, but doesn't know about current events.</p>
+                </div>
+                <button id="btn-owl" class="btn-yellow w-full py-2 md:py-3 font-bold text-base md:text-lg mt-3 shrink-0">
+                    🦉 Consult Barnaby (Free)
+                </button>
+            </div>
+
+            <!-- Scout Snail -->
+            <div class="wood-panel p-4 md:p-6 flex-1 flex flex-col justify-between relative overflow-hidden min-h-[160px]">
+                <div class="absolute top-2 right-2 text-4xl opacity-20">🐌</div>
+                <div>
+                    <h2 class="text-xl md:text-2xl font-bold mb-1 text-chocolate">Scout Snail</h2>
+                    <p class="text-xs text-warmbrown font-bold mb-2 bg-cream inline-block px-2 rounded">Status: Connected to live Web-Ether.</p>
+                    <p class="text-xs md:text-sm italic text-chocolate/80">The Scout Snail browses the live world for real-time information. It is accurate for today, but requires a Berry Treat to deploy.</p>
+                </div>
+                <button id="btn-snail" class="btn-yellow w-full py-2 md:py-3 font-bold text-base md:text-lg mt-3 border-rustred shrink-0">
+                    🐌 Deploy Snail (Costs 1 🍓)
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Custom Modal Overlay (Replaces alerts) -->
+    <div id="modal-overlay" class="fixed inset-0 bg-chocolate/80 z-50 hidden flex justify-center items-center backdrop-blur-sm">
+        <div class="bg-cream border-4 border-warmbrown rounded-2xl p-8 max-w-lg w-full text-center shadow-2xl animate-pop">
+            <div id="modal-icon" class="text-6xl mb-4">✨</div>
+            <h2 id="modal-title" class="text-3xl font-bold text-chocolate mb-4">Title</h2>
+            <p id="modal-desc" class="text-lg text-chocolate mb-8 leading-relaxed">Description goes here.</p>
+            <button id="btn-modal-next" class="btn-yellow px-8 py-3 font-bold text-xl w-full">Next</button>
+        </div>
+    </div>
+
+    <script>
+        // Game Data Definition
+        const gameData = [
+            // DAY 1 - Easy Introductions
+            {
+                day: 1,
+                startingTreats: 5,
+                customers: [
+                    {
+                        name: "Rusty the Fox",
+                        emoji: "🦊",
+                        question: "I'm doing a history project. What year was the old stone bridge built?",
+                        isRealTime: false,
+                        owlAnswer: "The old stone bridge was constructed exactly in 1922 by the Badger Builder Guild.",
+                        snailAnswer: "Web search confirms: The old stone bridge was constructed in 1922.",
+                        successMsg: "Perfect! Rusty got an A+ on his project. Barnaby's historical knowledge was spot on, saving you a berry treat!",
+                        failMsg: "You wasted a berry treat! The snail gave you the same historical info Barnaby already knew."
+                    },
+                    {
+                        name: "Harriet the Hedgehog",
+                        emoji: "🦔",
+                        question: "I'm packing for a picnic RIGHT NOW! Is it raining at the peak of Mt. Root today?",
+                        isRealTime: true,
+                        owlAnswer: "Mt. Root is known for its beautiful sunny weather! You are perfectly safe to go today.",
+                        snailAnswer: "Live Weather Alert: A severe thunderstorm is currently active at Mt. Root.",
+                        successMsg: "Phew! The live search saved Harriet from a thunderstorm. Good job realizing Barnaby couldn't know today's weather.",
+                        failMsg: "Oh no! Harriet went to the mountain based on Barnaby's hallucinated answer and got completely soaked! Barnaby's knowledge is frozen in 2025; he doesn't know today's weather."
+                    },
+                    {
+                        name: "Chef Bear",
+                        emoji: "🐻",
+                        question: "My recipe book tore. What is the classic ratio of flour to water for standard bread dough?",
+                        isRealTime: false,
+                        owlAnswer: "The standard classic ratio is 5 parts flour to 3 parts water.",
+                        snailAnswer: "Web search confirms: The classic ratio is 5 parts flour to 3 parts water.",
+                        successMsg: "Delicious! Chef Bear baked perfect bread using Barnaby's vast historical database.",
+                        failMsg: "You wasted a berry! Standard recipes don't change daily, so Barnaby's pretrained memory was perfectly fine here."
+                    }
+                ]
+            },
+            // DAY 2 - Tricky phrasing
+            {
+                day: 2,
+                startingTreats: 3,
+                customers: [
+                    {
+                        name: "Mayor Owl (Barnaby's Cousin)",
+                        emoji: "🦉",
+                        question: "I am writing a biography on Mayor Higgins. In the 1990 election, did he win his second term?",
+                        isRealTime: false,
+                        owlAnswer: "Yes, Mayor Higgins won his second term in 1990 by a landslide margin.",
+                        snailAnswer: "Historical Records: Mayor Higgins won his second term in 1990.",
+                        successMsg: "Great job! Even though it's about a Mayor, it's historical data from 1990. Barnaby handles this perfectly.",
+                        failMsg: "Wasted a treat! You don't need a live web search for an election that happened in 1990."
+                    },
+                    {
+                        name: "Speedy the Rabbit",
+                        emoji: "🐰",
+                        question: "Who is the CURRENT reigning champion of the annual Acorn Derby?",
+                        isRealTime: true,
+                        owlAnswer: "The current undisputed reigning champion of the Acorn Derby is Swift the Hare!",
+                        snailAnswer: "Live Sports Web-Ether: Dash the Squirrel just won the Acorn Derby this morning!",
+                        successMsg: "Nice catch! Barnaby confidently stated the 2025 champion, but you used the snail to get today's actual winner.",
+                        failMsg: "Disaster! Speedy bet all his acorns on the 2025 champion Barnaby suggested, not realizing a new champion was crowned this morning! Watch out for the word 'Current'."
+                    },
+                    {
+                        name: "Pippa the Mouse",
+                        emoji: "🐭",
+                        question: "I need to visit my sister. Is the valley train running on schedule today, or are there delays?",
+                        isRealTime: true,
+                        owlAnswer: "The valley train is highly reliable and is running exactly on schedule today.",
+                        snailAnswer: "Live Transit Authority: All valley trains are delayed by 2 hours due to fallen leaves.",
+                        successMsg: "Excellent! You checked the live web-ether. Train schedules change daily, so Barnaby's static memory would have failed her.",
+                        failMsg: "Oh dear. Barnaby hallucinated that the train was on time. Pippa waited at the station for 2 hours! Pretrained AI models cannot know real-time delays."
+                    }
+                ]
+            },
+            // DAY 3 - Resource Scarcity
+            {
+                day: 3,
+                startingTreats: 2,
+                customers: [
+                    {
+                        name: "Agent Raccoon",
+                        emoji: "🦝",
+                        question: "What is today's secret rotating password for the underground truffle club?",
+                        isRealTime: true,
+                        owlAnswer: "The secret password is 'Golden Mushroom'.",
+                        snailAnswer: "Encrypted Live Search: Today's password is 'Midnight Spore'.",
+                        successMsg: "Smooth moves. You knew a daily password required live retrieval. Barnaby just guessed an old one.",
+                        failMsg: "Agent Raccoon got kicked out of the club! Barnaby confidently gave a password from 2025."
+                    },
+                    {
+                        name: "Professor Toad",
+                        emoji: "🐸",
+                        question: "For my geography class: What is the capital city of the human country, France?",
+                        isRealTime: false,
+                        owlAnswer: "The capital city of France is Paris.",
+                        snailAnswer: "Web search: The capital is Paris.",
+                        successMsg: "Correct! Capital cities rarely change, so Barnaby's static pretrained knowledge is the perfect free tool to use here.",
+                        failMsg: "A wasted berry! You only have two today! Capital cities don't change overnight; Barnaby knew this."
+                    },
+                    {
+                        name: "Trader Squirrel",
+                        emoji: "🐿️",
+                        question: "I need to invest! Did the stock market price for hazelnuts crash this morning?!",
+                        isRealTime: true,
+                        owlAnswer: "Do not worry! Hazelnut stocks are completely stable and rising steadily this morning.",
+                        snailAnswer: "Live Financial Ether: CRASH! Hazelnut prices plummeted 50% an hour ago!",
+                        successMsg: "Brilliant! You checked the live feed. Barnaby would have happily told him to invest in a crashed market.",
+                        failMsg: "Bankruptcy! Barnaby hallucinated that the market was stable because his data stopped in 2025. You must use web retrieval for live prices!"
+                    }
+                ]
+            }
+        ];
+
+        // Game State Variables
+        let currentDayIndex = 0;
+        let currentCustomerIndex = 0;
+        let reputation = 5;
+        let treats = 0;
+        let selectedSource = null; // 'owl' or 'snail'
+        
+        // DOM Elements
+        const elDay = document.getElementById('ui-day');
+        const elReputation = document.getElementById('ui-reputation');
+        const elTreats = document.getElementById('ui-treats');
+        const elCustomerCount = document.getElementById('ui-customer-count');
+        const elEmoji = document.getElementById('character-emoji');
+        const elName = document.getElementById('character-name');
+        const elDialogue = document.getElementById('dialogue-box');
+        const elDraft = document.getElementById('draft-box');
+        
+        const btnOwl = document.getElementById('btn-owl');
+        const btnSnail = document.getElementById('btn-snail');
+        const btnSubmit = document.getElementById('btn-submit');
+        
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalTitle = document.getElementById('modal-title');
+        const modalDesc = document.getElementById('modal-desc');
+        const btnModalNext = document.getElementById('btn-modal-next');
+
+        function initGame() {
+            showModal("Welcome to the Kiosk!", 
+                "You are the new Postmaster Apprentice! Customers will ask you questions.<br><br><b>Barnaby the Owl</b> memorized everything up to 2025. He is free to use, but he will confidently <b>hallucinate</b> (make up) answers for current events.<br><br><b>The Scout Snail</b> checks the live web, but costs a precious 🍓 Berry Treat.<br><br>Don't fall for Barnaby's confident guesses on live events!", 
+                "Start Day 1", 
+                startDay);
+        }
+
+        function startDay() {
+            if (currentDayIndex >= gameData.length) {
+                gameWin();
+                return;
+            }
+            const dayData = gameData[currentDayIndex];
+            currentCustomerIndex = 0;
+            treats = dayData.startingTreats;
+            updateTopUI();
+            
+            showModal(`Day ${currentDayIndex + 1} begins`, `You have ${treats} 🍓 Berry Treats today. Use them wisely!`, "Open Kiosk", loadCustomer);
+        }
+
+        function updateTopUI() {
+            elDay.innerText = `Day ${currentDayIndex + 1} / 3`;
+            elReputation.innerText = '★'.repeat(reputation) + '☆'.repeat(5 - reputation);
+            elTreats.innerText = '🍓'.repeat(treats) + '⚪'.repeat(gameData[currentDayIndex].startingTreats - treats);
+            
+            // UI safety checks
+            if(treats <= 0) {
+                btnSnail.disabled = true;
+                btnSnail.innerText = "🐌 Snail Asleep (Out of Treats)";
+            } else {
+                btnSnail.disabled = false;
+                btnSnail.innerText = "🐌 Deploy Snail (Costs 1 🍓)";
+            }
+        }
+
+        function loadCustomer() {
+            const customer = gameData[currentDayIndex].customers[currentCustomerIndex];
+            elCustomerCount.innerText = `${currentCustomerIndex + 1} / ${gameData[currentDayIndex].customers.length}`;
+            elEmoji.innerText = customer.emoji;
+            elName.innerText = customer.name;
+            elDialogue.innerText = `"${customer.question}"`;
+            
+            // Reset drafting state
+            selectedSource = null;
+            elDraft.innerHTML = "Select a research method on the right to draft an answer...";
+            elDraft.classList.replace('bg-cream', 'bg-white/50');
+            elDraft.classList.remove('border-solid');
+            elDraft.classList.add('border-dashed');
+            
+            btnSubmit.disabled = true;
+            updateTopUI();
+        }
+
+        btnOwl.addEventListener('click', () => {
+            const customer = gameData[currentDayIndex].customers[currentCustomerIndex];
+            selectedSource = 'owl';
+            elDraft.innerHTML = `<b>[Barnaby's Memory]</b><br>"${customer.owlAnswer}"`;
+            styleDraftBox();
+            btnSubmit.disabled = false;
+        });
+
+        btnSnail.addEventListener('click', () => {
+            if (treats > 0) {
+                const customer = gameData[currentDayIndex].customers[currentCustomerIndex];
+                selectedSource = 'snail';
+                elDraft.innerHTML = `<b>[Live Web-Ether]</b><br>"${customer.snailAnswer}"`;
+                styleDraftBox();
+                btnSubmit.disabled = false;
+            }
+        });
+
+        function styleDraftBox() {
+            elDraft.classList.replace('bg-white/50', 'bg-cream');
+            elDraft.classList.replace('border-dashed', 'border-solid');
+            // Little animation bump
+            elDraft.classList.remove('animate-pop');
+            void elDraft.offsetWidth; // trigger reflow
+            elDraft.classList.add('animate-pop');
+        }
+
+        btnSubmit.addEventListener('click', () => {
+            const customer = gameData[currentDayIndex].customers[currentCustomerIndex];
+            let isSuccess = false;
+            let feedbackTitle = "";
+            let feedbackDesc = "";
+            let nextAction = nextCustomer;
+
+            if (customer.isRealTime) {
+                // It's a live question
+                if (selectedSource === 'owl') {
+                    // FAIL: Used old data for new event
+                    isSuccess = false;
+                    reputation -= 1;
+                    feedbackTitle = "❌ Disastrous Hallucination!";
+                    feedbackDesc = customer.failMsg;
+                } else if (selectedSource === 'snail') {
+                    // SUCCESS: Used snail for live event
+                    isSuccess = true;
+                    treats -= 1;
+                    feedbackTitle = "✅ Perfect Real-Time Pull!";
+                    feedbackDesc = customer.successMsg;
+                }
+            } else {
+                // It's a historical question
+                if (selectedSource === 'owl') {
+                    // SUCCESS: Used free owl for static data
+                    isSuccess = true;
+                    feedbackTitle = "✅ Efficient Historical Pull!";
+                    feedbackDesc = customer.successMsg;
+                } else if (selectedSource === 'snail') {
+                    // MINOR FAIL: Wasted resources
+                    isSuccess = true; // Not a catastrophic fail for the customer, but bad for management
+                    treats -= 1;
+                    feedbackTitle = "⚠️ Unnecessary Search!";
+                    feedbackDesc = customer.failMsg;
+                }
+            }
+
+            updateTopUI();
+
+            if (reputation <= 0) {
+                feedbackTitle = "💀 Kiosk Bankrupt!";
+                feedbackDesc = "Your reputation fell to zero! Customers no longer trust your information because you gave them too many AI hallucinations. Game Over.";
+                nextAction = () => location.reload();
+            }
+
+            showModal(feedbackTitle, feedbackDesc, reputation <= 0 ? "Restart" : "Next Customer", nextAction);
+        });
+
+        function nextCustomer() {
+            currentCustomerIndex++;
+            if (currentCustomerIndex >= gameData[currentDayIndex].customers.length) {
+                // End of day
+                currentDayIndex++;
+                startDay();
+            } else {
+                loadCustomer();
+            }
+        }
+
+        function gameWin() {
+            let title = "";
+            let message = "";
+
+            if (reputation >= 4) {
+                title = "🎉 Certified Master Prompter!";
+                message = "Outstanding job! You successfully managed the kiosk with high praise.<br><br>You truly mastered the concept that <b>Pretrained AI Models have a knowledge cutoff</b>. By perfectly balancing Web Retrieval (Scout Snail) for current events and internal memory (Barnaby) for historical facts, you kept the villagers safe from AI hallucinations!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+            } else if (reputation === 3) {
+                title = "👍 Capable Postmaster!";
+                message = "Good job! You managed the kiosk, though a few villagers got mixed up by bad advice.<br><br>Remember, <b>Pretrained AI Models have a knowledge cutoff</b>. You caught most of Barnaby's hallucinations, but next time, be extra careful to use the Scout Snail for current events!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+            } else {
+                title = "😅 Barely Scraped By!";
+                message = "Phew... You kept the kiosk open, but the villagers are very skeptical of your advice.<br><br>You fell for Barnaby's confident hallucinations a bit too often. Always remember: <b>Pretrained AI Models have a knowledge cutoff</b> and cannot know current events without a live web search!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+            }
+
+            showModal(title, message, "Play Again", () => location.reload());
+        }
+
+        // Modal System
+        let currentModalCallback = null;
+        function showModal(title, desc, btnText, callback) {
+            modalTitle.innerHTML = title;
+            modalDesc.innerHTML = desc;
+            btnModalNext.innerText = btnText;
+            
+            if (title.includes("❌")) modalIcon.innerText = "📉";
+            else if (title.includes("✅")) modalIcon.innerText = "📈";
+            else if (title.includes("⚠️")) modalIcon.innerText = "🐌";
+            else modalIcon.innerText = "✨";
+
+            currentModalCallback = callback;
+            modalOverlay.classList.remove('hidden');
+        }
+
+        btnModalNext.addEventListener('click', () => {
+            modalOverlay.classList.add('hidden');
+            if (currentModalCallback) currentModalCallback();
+        });
+
+        // Start the game on load
+        window.onload = initGame;
+
+    </script>
+</body>
+</html>
