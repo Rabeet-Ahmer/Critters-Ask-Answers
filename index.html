@@ -469,13 +469,13 @@
 
             if (reputation >= 4) {
                 title = "🎉 Certified Master Prompter!";
-                message = "Outstanding job! You successfully managed the kiosk with high praise.<br><br>You truly mastered the concept that <b>Pretrained AI Models have a knowledge cutoff</b>. By perfectly balancing Web Retrieval (Scout Snail) for current events and internal memory (Barnaby) for historical facts, you kept the villagers safe from AI hallucinations!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+                message = "Outstanding job! You successfully managed the kiosk with high praise.<br><br>You truly mastered the concept that <b>Pretrained AI Models have a knowledge cutoff</b>. By perfectly distinguishing between static knowledge and live information, you proved that LLMs like me have limitations, and the best practices involve knowing when to retrieve live data vs. using pretrained knowledge.<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
             } else if (reputation === 3) {
                 title = "👍 Capable Postmaster!";
-                message = "Good job! You managed the kiosk, though a few villagers got mixed up by bad advice.<br><br>Remember, <b>Pretrained AI Models have a knowledge cutoff</b>. You caught most of Barnaby's hallucinations, but next time, be extra careful to use the Scout Snail for current events!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+                message = "Good job! You managed the kiosk, though a few villagers got mixed up by bad advice.<br><br>Remember, <b>Pretrained AI Models have a knowledge cutoff</b>. You caught most of the real-time questions, but remember: current events, live prices, today's weather, and real-time updates always need live retrieval.<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
             } else {
                 title = "😅 Barely Scraped By!";
-                message = "Phew... You kept the kiosk open, but the villagers are very skeptical of your advice.<br><br>You fell for Barnaby's confident hallucinations a bit too often. Always remember: <b>Pretrained AI Models have a knowledge cutoff</b> and cannot know current events without a live web search!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
+                message = "Phew... You kept the kiosk open, but the villagers are very skeptical of your advice.<br><br>You fell for Barnaby's confident hallucinations a bit too often. Always remember: Pretrained AI models like me have a knowledge cutoff. Questions about 'today', 'current', 'now', or 'latest' almost always need live web retrieval!<br><br>Your final reputation: " + ('★'.repeat(reputation)) + ('☆'.repeat(5 - reputation));
             }
 
             showModal(title, message, "Play Again", () => location.reload());
